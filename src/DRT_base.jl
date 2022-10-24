@@ -4,8 +4,7 @@ Base.@kwdef mutable struct DRT_control
   tau_max_fac::Float32 = 1.0
   tau_range_fac::Float32 = 3.0
   peak_merge_tol::Float32 = 0.0
-  f_range = nothing
-  OER(**R*R*RRRR)R)(E QWE :: :QWE "Q:WE((( }
+  f_range = nothing  
 end
 
 Base.@kwdef mutable struct DRT_struct

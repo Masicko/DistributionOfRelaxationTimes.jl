@@ -4,7 +4,6 @@ module DistributionOfRelaxationTimes
 # [ ] KK relations 
 # [ ] separate DRT vs EIS_reconstruction vs peak_analysis in calling get_DRT
 # [ ] udelat testy, ktere budou i vypisovat chybove hlasky?
-# [ ] what about the licence?
 
 using PyPlot
 using DataFrames
