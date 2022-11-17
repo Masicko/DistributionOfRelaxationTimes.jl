@@ -1,0 +1,10 @@
+name = "DistributionOfRelaxationTimes"
+uuid = "611472a3-bcd4-451d-9820-2ffaee937d6f"
+authors = ["milos <vojta.milos@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+NonNegLeastSquares = "b7351bd1-99d9-5c5d-8786-f205a815c4d7"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
