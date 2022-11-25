@@ -25,4 +25,6 @@ export plot_DRT_RC
 export plot_DRT_Rtau
 export plot_DRT_f
 
+include("Z_file_IO.jl")
+export read_Z_file
 end # module
