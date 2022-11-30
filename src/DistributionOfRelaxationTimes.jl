@@ -1,9 +1,15 @@
 module DistributionOfRelaxationTimes
 
+# [ ] radeji udelat obsirnejsi strukturu, kterou pak budou moct vyuzivat
+#       ... DRT_tools
+#         ... DistributionOfRelaxationTimes
+#         ... Z_file_IO
+#         ... Nyquist_plots
+
+
 # TODO
 # [ ] KK relations 
 # [ ] separate DRT vs EIS_reconstruction vs peak_analysis in calling get_DRT
-# [ ] udelat testy, ktere budou i vypisovat chybove hlasky?
 
 using PyPlot
 using DataFrames

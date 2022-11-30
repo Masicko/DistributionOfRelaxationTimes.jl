@@ -1,7 +1,7 @@
 # default number of figures
 const DRT_standard_figure = 33
 
-function nyquistPlot(Z; fignum=1, label="")
+function plot_Nyquist(Z; fignum=1, label="")
     s = subplot(111)
     title("Nyquist plot")
     xlabel("Re\$(Z) \\ [\\Omega]\$")
