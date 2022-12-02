@@ -15,7 +15,7 @@ function main()
     my_DRT = get_DRT(f_range, Z_range, DRT_control(tau_max_fac=tau_max_fac))
     
     figure(1)
-    nyquistPlot(my_DRT.EIS_df.Z, label="l = $(tau_max_fac)")  
+    plot_Nyquist(my_DRT.EIS_df.Z, label="l = $(tau_max_fac)")  
     
     figure(2)
     plot_DRT_h(my_DRT, false, label="l = $(tau_max_fac)")
@@ -23,10 +23,14 @@ function main()
   
   
   figure(1)
-  nyquistPlot(Z_range, label="data")
+  plot_Nyquist(Z_range, label="data")
   
-  
-  return
+    
+  return true
+end
+
+function test()
+  main()
 end
 
 end # module

@@ -11,11 +11,11 @@ function main()
   f_nyq = figure(1)
   f_drt = figure(2)
   
-  for lambda in collect(0.0 : 0.5 : 1.0)
+  for lambda in [0.0, 0.5]
     my_DRT = get_DRT(f_range, Z_range, DRT_control(lambda=lambda))
     
     figure(1)
-    nyquistPlot(my_DRT.EIS_df.Z, label="l = $(lambda)")  
+    plot_Nyquist(my_DRT.EIS_df.Z, label="l = $(lambda)")  
     
     figure(2)
     plot_DRT_h(my_DRT, false, label="l = $(lambda)")
@@ -23,10 +23,14 @@ function main()
   
   
   figure(1)
-  nyquistPlot(Z_range, label="data")
+  plot_Nyquist(Z_range, label="data")
   
   
-  return
+  return true
+end
+
+function test()
+  main()
 end
 
 end # module

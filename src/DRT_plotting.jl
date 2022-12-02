@@ -52,7 +52,7 @@ function plot_DRT_RC(DRT::DRT_struct, to_standard_figure=true, print_bool=true)
   end
 end
 
-function plot_DRT_Rtau(DRT::DRT_struct, to_standard_figure=true, print_bool=false)
+function plot_DRT_Rtau(DRT::DRT_struct, to_standard_figure=true, print_bool=false; label="")
   if to_standard_figure
     figure(DRT_standard_figure)
   end
@@ -69,7 +69,10 @@ function plot_DRT_Rtau(DRT::DRT_struct, to_standard_figure=true, print_bool=fals
   ylim(0, max(
     (length(peaks_df.R) > 0 ? maximum(peaks_df.R)*1.1 : 0.0001), 
     previos_maximum)  )
-  plot(log10.(peaks_df.C.*peaks_df.R), peaks_df.R, "o")
+  plot(log10.(peaks_df.C.*peaks_df.R), peaks_df.R, "o", label=label)
+  if label!=""
+    legend()
+  end
   grid(true)
 
 end

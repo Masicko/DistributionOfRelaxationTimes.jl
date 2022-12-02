@@ -13,7 +13,7 @@ function merge_peaks(DRT::DRT_struct)
           DRT.peaks_df.tau_c[i-1] = 10^((log10(DRT.peaks_df.tau_c[i-1] * DRT.peaks_df.tau_c[i]))/2)
           DRT.peaks_df.R[i-1] += DRT.peaks_df.R[i]
           DRT.peaks_df.C[i-1] = DRT.peaks_df.tau_c[i-1]/DRT.peaks_df.R[i-1]
-          deleterows!(DRT.peaks_df, i)
+          deleteat!(DRT.peaks_df, i)
           #
           
           new_loop = true

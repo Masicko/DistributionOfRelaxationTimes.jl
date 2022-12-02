@@ -3,6 +3,7 @@ using DistributionOfRelaxationTimes, Test
 include("data/data_storage.jl")
 
 # [ ] add real world examples
+# [ ] add HF example
 
 function R_RC_element_test()
 
@@ -80,6 +81,25 @@ function plotting_tests()
   end
 end
 
+modname(fname)=splitext(basename(fname))[1]
+
+function run_tests_from_directory(testdir,prefix)
+    println("Directory $(testdir):")
+    examples=modname.(readdir(testdir))
+    for example in examples
+        if length(example)>=length(prefix) &&example[1:length(prefix)]==prefix
+            println("  $(example):")
+            path=joinpath(testdir,"$(example).jl")
+            @eval begin
+                include($path)
+                # Compile + run test
+                @test eval(Meta.parse("$($example).test()"))
+                # Second run: pure execution time.
+                @time eval(Meta.parse("$($example).test()"))
+            end
+        end
+    end
+end
 
 function run_all_tests()
   @testset "General_tests" begin
@@ -93,6 +113,10 @@ function run_all_tests()
   
   @testset "Plotting" begin
     plotting_tests()
+  end
+  
+  @testset "Examples" begin
+    run_tests_from_directory("../examples", "Example")
   end
 end
 

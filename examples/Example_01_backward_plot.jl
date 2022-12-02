@@ -10,8 +10,8 @@ function main()
   
   my_DRT = get_DRT(f_range, Z_range)
   
-  nyquistPlot(Z_range)
-  nyquistPlot(my_DRT.EIS_df.Z)
+  plot_Nyquist(Z_range)
+  plot_Nyquist(my_DRT.EIS_df.Z)
   
   figure(2)
   plot_DRT_h(my_DRT, false)
@@ -25,7 +25,11 @@ function main()
 #   figure(5)
 #   plot_DRT_Rtau(my_DRT, false)
    
-  return
+  return true
+end
+
+function test()
+  main()
 end
 
 end # module
