@@ -4,9 +4,9 @@
 Costruction of both matrix A and the right hand side b.
 """
 
-function construct_A_matrix_and_b(f_nodes, tau_range, Z, lambda)
+function construct_A_matrix_and_b(f_nodes, tau_list, Z, lambda)
   N_f = size(f_nodes, 1)
-  N_tau = size(tau_range, 1)
+  N_tau = size(tau_list, 1)
   
   # h, R_ohm, L
   n_cols = N_tau + 2  
@@ -16,7 +16,7 @@ function construct_A_matrix_and_b(f_nodes, tau_range, Z, lambda)
   else
     n_rows = 2*N_f + n_cols
   end
-#   @show tau_range
+#   @show tau_list
 #   @show f_nodes
     
   A = Matrix{Float64}(undef, n_rows, n_cols)
@@ -25,7 +25,7 @@ function construct_A_matrix_and_b(f_nodes, tau_range, Z, lambda)
   # assemble A and b
   for (i, f) in enumerate(f_nodes)
     #RC
-    for (j, tau) in enumerate(tau_range)
+    for (j, tau) in enumerate(tau_list)
       A[i, j]       = real(1/(1 + im*(2*pi*f)*tau))
       A[N_f + i, j] = imag(1/(1 + im*(2*pi*f)*tau))
     end
@@ -60,8 +60,8 @@ and optimization is run once more.
 """
 
 function high_frequency_adjustment!(solution, A, b, N_tau)
-  if solution[1] > 0.000001
-    println(" !  High frequency adjustment ---------------------- ")
+  if solution[1] > 0.001*maximum(solution[1:N_tau])
+    println("--- High frequency adjustment --------------------")
     R_ohm_estimate = solution[N_tau + 1] + solution[1]
   
     next_row = zeros(N_tau + 2)
@@ -75,19 +75,19 @@ function high_frequency_adjustment!(solution, A, b, N_tau)
 end
 
 """
-
-Optimization procedure sometimes returns high-frequency (and low-frequency) peaks which
-do not make physical sense. These artifacts are removed from the DRT solution.
-"""
-
-function delete_corner_effects!(solution, control)
-  if control.lambda == 0.0 && false
-    # solution[end-1] is ohmic resistance R_ohm 
-    # solution[end] is inductance L
-    solution[end-7 : end-2] .= 0
-    solution[1 : 3] .=0
-  end
-end
+# 
+# Optimization procedure sometimes returns high-frequency (and low-frequency) peaks which
+# do not make physical sense. These artifacts are removed from the DRT solution.
+# """
+# 
+# function delete_corner_effects!(solution, control)
+#   if control.lambda == 0.0
+#     # solution[end-1] is ohmic resistance R_ohm 
+#     # solution[end] is inductance L
+#     solution[end-7 : end-2] .= 0
+#     solution[1 : 4] .=0
+#   end
+# end
 
 """
 
@@ -95,12 +95,12 @@ The impedance data are generated using the extracted DRT information.
 It is useful in order to compare DRT approximation to the original impedance data.
 """
 
-function reconstruct_EIS_from_DRT(A, N_f, solution, control, tau_range, EIS_df)
+function reconstruct_EIS_from_DRT(A, N_f, solution, control, tau_list, EIS_df)
   if control.f_range != nothing  
     f_nodes = geomspace_by_fac(control.f_range...)
         
     # assemble A_new w.r.t. specified f_range
-    (A_new, b, N_f, N_tau) = construct_A_matrix_and_b(f_nodes, tau_range, nothing, 0.0)
+    (A_new, b, N_f, N_tau) = construct_A_matrix_and_b(f_nodes, tau_list, nothing, 0.0)
   
     b_new = A_new*solution
     
@@ -121,9 +121,25 @@ function reconstruct_EIS_from_DRT(A, N_f, solution, control, tau_range, EIS_df)
   return EIS_new
 end
 
-# function capture_corner_effects()
-#   
-# end
+"""
+
+Gives a list of characteristic times which the EIS will be decomposed into.
+"""
+
+function get_tau_list(EIS_df::DataFrame, control::DRT_control)
+  if typeof(control.tau_min_abs) != Nothing 
+    tau_min = control.tau_min_abs
+  else  
+    tau_min = 1.0/(2*pi*EIS_df.f[end]) / control.tau_min_fac
+  end
+  
+  if typeof(control.tau_max_abs) != Nothing 
+    tau_max = control.tau_max_abs
+  else
+    tau_max = 1.0/(2*pi*EIS_df.f[1]) * control.tau_max_fac
+  end
+  return geomspace(tau_min, tau_max, N=control.tau_sampling_fac*size(EIS_df.f, 1)-2)
+end
 
 
 """
@@ -142,32 +158,19 @@ The function computes DRT spectrum from impedance data and returns the DRT struc
 """
 
 function get_DRT(EIS_df::DataFrame, control::DRT_control=DRT_control())  
-  tau_min = 1.0/(2*pi*EIS_df.f[end]) / control.tau_min_fac
-  tau_max = 1.0/(2*pi*EIS_df.f[1]) * control.tau_max_fac
-  tau_range = geomspace(tau_min, tau_max, N=control.tau_range_fac*size(EIS_df.f, 1)-2)
+  tau_list = get_tau_list(EIS_df, control)
   
-  (A, b, N_f, N_tau) = construct_A_matrix_and_b(EIS_df.f, tau_range, EIS_df.Z, control.lambda)
-  
+  (A, b, N_f, N_tau) = construct_A_matrix_and_b(EIS_df.f, tau_list, EIS_df.Z, control.lambda)
   
   solution= nonneg_lsq(A, b; alg=:nnls)
   
-  # processing  
-  
-  ## TODO ! ! ! !
-  ## 
-  ## enlarge tau domain to capture corner effects
-  ## 
-  #capture_corner_effects(solution)
-  
-  high_frequency_adjustment!(solution, A, b, N_tau)
-  
-  
-  delete_corner_effects!(solution, control)
+  # an attempt to set the true value of R_ohm
+  control.HF_adjustment && control.lambda == 0.0 && high_frequency_adjustment!(solution, A, b, N_tau)
   
   # reconstruction of EIS from DRT
-  EIS_new = reconstruct_EIS_from_DRT(A, N_f, solution, control, tau_range, EIS_df)
+  EIS_new = reconstruct_EIS_from_DRT(A, N_f, solution, control, tau_list, EIS_df)
   
-  DRT_out = DRT_struct(EIS_new, tau_range, solution[1:end - 2], solution[end-1], solution[end], DataFrame(), control)
+  DRT_out = DRT_struct(EIS_new, tau_list, solution[1:end - 2], solution[end-1], solution[end], DataFrame(), control)
   evaluate_RC_peaks_from_DRT!(DRT_out)
   
   return DRT_out

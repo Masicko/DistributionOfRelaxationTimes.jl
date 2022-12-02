@@ -1,6 +1,6 @@
 using DistributionOfRelaxationTimes, Test
 
-include("data_storage.jl")
+include("data/data_storage.jl")
 
 # [ ] add real world examples
 
@@ -54,21 +54,31 @@ function tau_list_tests()
   
   test_extrapol_DRT_vs_answer(extrapol_all_data(), correct_answer)
   test_extrapol_DRT_vs_answer(extrapol_almost_peak(), correct_answer, 
-      DRT_control(tau_min_fac=10, tau_max_fac=1, tau_range_fac=10)
+      DRT_control(tau_min_fac=10, tau_max_fac=1, tau_sampling_fac=10)
   )
   test_extrapol_DRT_vs_answer(extrapol_hard_case(), correct_answer, 
-      DRT_control(tau_min_fac=10, tau_max_fac=2, tau_range_fac=100)
+      DRT_control(tau_min_fac=10, tau_max_fac=2, tau_sampling_fac=100)
   )
-end
-
-function frequency_extrapolation_tests()
-  correct_answer = (20, 20, 0.0005, 20, 0.025)
+  test_extrapol_DRT_vs_answer(extrapol_hard_case(), correct_answer, 
+      DRT_control(tau_min_abs=1.0e-4, tau_max_abs=1.0e4, tau_sampling_fac=100)
+  )
   
-  test_extrapol_DRT_vs_answer(extrapol_almost_peak(), correct_answer)
-  test_extrapol_DRT_vs_answer(extrapol_hard_case(), correct_answer)
+  
+  # TODO peak merge test, lambda
 end
 
-
+function plotting_tests()
+  @test begin
+    DRT_output = get_DRT(extrapol_all_data()...)
+  
+    plot_Nyquist(DRT_output.EIS_df.Z)
+    plot_DRT_h(DRT_output)
+    plot_DRT_RC(DRT_output, true, false)
+    plot_DRT_Rtau(DRT_output)
+    plot_DRT_Rf(DRT_output)
+    true
+  end
+end
 
 
 function run_all_tests()
@@ -81,10 +91,9 @@ function run_all_tests()
     tau_list_tests()
   end
   
-  @testset "Frequency_extrapolation" begin
-    frequency_extrapolation_tests()
+  @testset "Plotting" begin
+    plotting_tests()
   end
-  
 end
 
 run_all_tests()

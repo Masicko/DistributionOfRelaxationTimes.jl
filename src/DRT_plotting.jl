@@ -11,7 +11,7 @@ function plot_Nyquist(Z; fignum=1, label="")
       legend()
     end
     grid(true)
-    s.set_aspect(1.0)  
+    s.set_aspect(1.0)
 end
 
 
@@ -21,7 +21,7 @@ function plot_DRT_h(DRT::DRT_struct, to_standard_figure=true, print_bool=false, 
   end
   
   title("DRT")
-  plot(log10.(DRT.tau_range), DRT.h, "-x", label=(label=="" ? "\$\\lambda\$=$(DRT.control.lambda)" : label))
+  plot(log10.(DRT.tau_list), DRT.h, "-x", label=(label=="" ? "\$\\lambda\$=$(DRT.control.lambda)" : label))
   xlabel("log10(\$\\tau\$ [s])")
   ylabel("\$h(\\tau)\$ [Ohm]")
   if (to_standard_figure || plot_lambda)
@@ -31,7 +31,7 @@ function plot_DRT_h(DRT::DRT_struct, to_standard_figure=true, print_bool=false, 
     println("non-DRT_parameters:  R_ohm = $(DRT.R_ohm)  L = $(DRT.L)")  
   end
 end
-  
+
 function plot_DRT_RC(DRT::DRT_struct, to_standard_figure=true, print_bool=true)
   if to_standard_figure
     figure(DRT_standard_figure)
@@ -61,7 +61,7 @@ function plot_DRT_Rtau(DRT::DRT_struct, to_standard_figure=true, print_bool=fals
   title("Rtau diagram")
   xlabel("log10(\$\\tau\$ [s])")
   ylabel("R [Ohm]")
-  xlim(log10.([DRT.tau_range[1], DRT.tau_range[end]])...)
+  xlim(log10.([DRT.tau_list[1], DRT.tau_list[end]])...)
   
   
   previos_maximum = (PyPlot.gca()).get_ylim()[2]
@@ -83,7 +83,7 @@ function plot_DRT_Rf(DRT::DRT_struct, to_standard_figure=true, print_bool=false)
   title("Rf diagram")
   xlabel("log10(\$f\$ [Hz])")
   ylabel("R [Ohm]")
-  xlim(log10.(1 ./(2*pi*[DRT.tau_range[end], DRT.tau_range[1]]))...)
+  xlim(log10.(1 ./(2*pi*[DRT.tau_list[end], DRT.tau_list[1]]))...)
   plot(log10.(1 ./(2*pi*peaks_df.C.*peaks_df.R)), peaks_df.R, "o")
   grid(true)
   

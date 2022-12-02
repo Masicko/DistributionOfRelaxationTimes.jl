@@ -1,15 +1,21 @@
 Base.@kwdef mutable struct DRT_control
   lambda::Float32 = 0.0
-  tau_min_fac::Float32 = 1.0
-  tau_max_fac::Float32 = 1.0
-  tau_range_fac::Float32 = 3.0
+  #
+  tau_min_fac::Float32 = 10.0
+  tau_max_fac::Float32 = 10.0
+  tau_sampling_fac::Float32 = 100.0
+  tau_min_abs::Union{Nothing, Float32} = nothing
+  tau_max_abs::Union{Nothing, Float32} = nothing
+  #
   peak_merge_tol::Float32 = 0.0
-  f_range = nothing  
+  f_range = nothing
+  #
+  HF_adjustment::Bool = true
 end
 
 Base.@kwdef mutable struct DRT_struct
   EIS_df::DataFrame
-  tau_range::Array{Float64}
+  tau_list::Array{Float64}
   h::Array{Float64}
   R_ohm::Float64
   L::Float64

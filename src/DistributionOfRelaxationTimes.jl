@@ -25,11 +25,11 @@ include("DRT_evaluation.jl")
 export get_DRT
 
 include("DRT_plotting.jl")
-export nyquistPlot
+export plot_Nyquist
 export plot_DRT_h
 export plot_DRT_RC
 export plot_DRT_Rtau
-export plot_DRT_f
+export plot_DRT_Rf
 
 include("Z_file_IO.jl")
 export read_Z_file
