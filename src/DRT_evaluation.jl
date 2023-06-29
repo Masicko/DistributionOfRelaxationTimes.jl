@@ -54,7 +54,7 @@ end
 
 """
 
-When DRT has nonzero the lowest frequency (the highest tau) value, 
+If the lowest frequency (the highest tau) value of DRT is non-zero, 
 this value is used as an estiamte for R_ohm resistance 
 and optimization is run once more.
 """

@@ -1,4 +1,4 @@
-# default number of figures
+# default number for DRT figures
 const DRT_standard_figure = 33
 
 function plot_Nyquist(Z; fignum=1, label="")

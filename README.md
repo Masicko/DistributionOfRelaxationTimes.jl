@@ -47,5 +47,5 @@ Output is stored in `DRT_struct` which has fields
 - `control` : the control struct used for DRT evaluation.
 
 ## Plotting
-Data can be plotted with functions which are shown in Example_.
+Data can be plotted with functions which are shown in Example_01_backward_plot.
 
