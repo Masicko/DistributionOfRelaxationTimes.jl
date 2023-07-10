@@ -49,3 +49,6 @@ Output is stored in `DRT_struct` which has fields
 ## Plotting
 Data can be plotted with functions which are shown in Example_01_backward_plot.
 
+## Acknowledgement
+
+Authors acknowledge financial support from the  Technology Agency of the Czech Republic under project no. TK04030143.
