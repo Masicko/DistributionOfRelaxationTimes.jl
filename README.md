@@ -51,4 +51,4 @@ Data can be plotted with functions which are shown in Example_01_backward_plot.
 
 ## Acknowledgement
 
-Authors acknowledge financial support from the  Technology Agency of the Czech Republic under project no. TK04030143.
+This work was supported by the German Research Foundation, DFG project no. FU 316/14-1, and by the Czech Science Foundation, GAČR project no. 19-14244J.
